@@ -80,9 +80,7 @@ Agar biror muammo yuzaga kelsa, quyidagilarni tekshiring:
 - Loglarni tekshirish uchun `logs/app.log` faylidan foydalaning.
 
 ## Muallif
-Loyiha muallifi: [Dilshodbek Nekmurodov]
+Loyiha muallifi: Dilshodbek Nekmurodov
 
 ## Litsenziya
 Bu loyiha [Litsenziya nomi] ostida tarqatiladi.
-
-# MADANIYAT-TA-LIMI-MARKAZI-BOT
