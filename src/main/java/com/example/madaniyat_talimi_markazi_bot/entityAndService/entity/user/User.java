@@ -27,9 +27,9 @@ public class User extends AbsEntity implements UserDetails {
     private Long chatId;
     private String name;
     private String surname;
+    private String username;
     private String phoneNumber;
-    private String position; // Lavozim
-    private String workplace; // Qayerda ishlaydi
+    private String workplace;
 
     @Enumerated(EnumType.STRING)
     private Role role;

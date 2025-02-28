@@ -16,8 +16,9 @@ public class UserDto {
     private Long chatId;
     private String name;
     private String surname;
+    private String username;
     private String phoneNumber;
-    private String password;
+    private String workplace;
 
     private Role role;
 }

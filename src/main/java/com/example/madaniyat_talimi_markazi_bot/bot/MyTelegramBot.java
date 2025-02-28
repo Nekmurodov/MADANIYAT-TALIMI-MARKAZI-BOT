@@ -46,24 +46,22 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         Long chatId = null;
+        String username = null;
         User user;
 
         if (update.hasCallbackQuery()) {
             chatId = update.getCallbackQuery().getMessage().getChatId();
+            username = update.getCallbackQuery().getFrom().getUserName();
         } else if (update.hasMessage() && update.getMessage().hasText()) {
             chatId = update.getMessage().getChatId();
+            username = update.getMessage().getFrom().getUserName();
         }
 
         if (chatId == null) return;
 
-        user = botService.getUser(chatId);
+        log.info("Received update: chatId = {}, username = {}", chatId, username);
 
-        if (user == null) {
-            user = new User();
-            user.setChatId(chatId);
-            user.setState(State.NEW);
-            botService.updateUser(user);
-        }
+        user = botService.getUser(chatId, username);
 
         if (update.hasCallbackQuery()) {
             processCallbackQuery(update);
@@ -79,11 +77,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private void processTextMessage(Update update) {
         Long chatId = update.getMessage().getChatId();
         String text = update.getMessage().getText();
+        String username = update.getMessage().getFrom().getUserName();
 
         if (text.equals("/start")) {
             sendLanguageButtons(chatId);
         } else {
-            User user = botService.getUser(chatId);
+            User user = botService.getUser(chatId, username);
             String response = handleUserState(user, text);
             sendMessage(chatId, response, user.getLanguage(), "");
         }
@@ -93,14 +92,15 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         String data = update.getCallbackQuery().getData();
         Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
+        String username = update.getCallbackQuery().getFrom().getUserName();
 
         switch (data) {
             case "CHANGE_LANGUAGE" -> sendLanguageButtons(chatId);
             case "RESTART" -> {
-                botService.resetUser(chatId);
+                botService.resetUser(chatId, username);
                 sendLanguageButtons(chatId);
             }
-            default -> handleLanguageSelection(chatId, data, messageId);
+            default -> handleLanguageSelection(chatId, data, messageId, username);
         }
     }
 
@@ -127,13 +127,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 return LocalizationService.getMessage("ask_phone", user.getLanguage());
             }
             case ASK_PHONE -> {
-                user.setPhoneNumber(text);
-                user.setState(State.ASK_POSITION);
-                botService.updateUser(user);
-                return LocalizationService.getMessage("ask_position", user.getLanguage());
-            }
-            case ASK_POSITION -> {
-                user.setPosition(text);
+                user.setWorkplace(text);
                 user.setState(State.ASK_WORKPLACE);
                 botService.updateUser(user);
                 return LocalizationService.getMessage("ask_workplace", user.getLanguage());
@@ -188,12 +182,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         return markup;
     }
 
-    private void handleLanguageSelection(Long chatId, String languageCode, Integer messageId) {
+    private void handleLanguageSelection(Long chatId, String languageCode, Integer messageId, String username) {
         try {
 
             Languages selectedLanguage = Languages.valueOf(languageCode);
 
-            User user = botService.getUser(chatId);
+            User user = botService.getUser(chatId, username);
             user.setLanguage(selectedLanguage);
             user.setState(State.ASK_NAME);
             botService.updateUser(user);
@@ -212,13 +206,13 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private void sendLanguageButtons(Long chatId) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> row = List.of(
-                createInlineButton("🇷🇺 Русский", "RU"),
                 createInlineButton("🇺🇿 O'zbek", "UZ"),
+                createInlineButton("🇷🇺 Русский", "RU"),
                 createInlineButton("🇬🇧 English", "EN")
         );
         markup.setKeyboard(List.of(row));
 
-        sendMessageWithMarkup(chatId, "Tilni tanlang/Choose language/Выберите язык:", markup);
+        sendMessageWithMarkup(chatId, "Tilni tanlang/Выберите язык/Choose language:", markup);
     }
 
     private InlineKeyboardButton createInlineButton(String text, String callbackData) {
