@@ -17,10 +17,17 @@ public class BotService {
     public final UserRepository userRepository;
     private final JavaMailSender mailSender;
 
-    public User getUser(Long chatId) {
-        return userRepository.findByChatIdAndDeletedFalse(chatId).orElseGet(() -> {
+    public User getUser(Long chatId, String username) {
+        return userRepository.findByChatIdAndDeletedFalse(chatId).map(user -> {
+            if (username != null && !username.equals(user.getUsername())) {
+                user.setUsername(username);
+                userRepository.save(user);
+            }
+            return user;
+        }).orElseGet(() -> {
             User newUser = new User();
             newUser.setChatId(chatId);
+            newUser.setUsername(username);
             newUser.setState(State.NEW);
             newUser.setLanguage(Languages.UZ); // Default til
             return userRepository.save(newUser);
@@ -39,26 +46,28 @@ public class BotService {
 
         String text = String.format("""
             🆕 Yangi foydalanuvchi murojaati:
+            📌 Telegram Username: @%s
             📌 Ism: %s
             📌 Familiya: %s
             📌 Telefon: %s
-            📌 Lavozim: %s
             📌 Ish joyi: %s
             📌 Xabar: %s
-            """, user.getName(), user.getSurname(), user.getPhoneNumber(), user.getPosition(), user.getWorkplace(), user.getMessage());
+            """, user.getUsername(),
+                user.getName(), user.getSurname(), user.getPhoneNumber(),
+                user.getWorkplace(), user.getMessage());
 
         message.setText(text);
         mailSender.send(message);
     }
 
-    public void resetUser(Long chatId) {
-        User user = getUser(chatId);
+    public void resetUser(Long chatId, String username) {
+        User user = getUser(chatId, username);
         user.setLanguage(null);
         user.setState(State.NEW);
         user.setName(null);
-        user.setSurname(null);
+        user.setSurname(username);
+        user.setUsername(null);
         user.setPhoneNumber(null);
-        user.setPosition(null);
         user.setWorkplace(null);
         user.setMessage(null);
         updateUser(user);

@@ -13,6 +13,8 @@ public class UserMapper {
         userDto.setChatId(user.getChatId());
         userDto.setName(user.getName());
         userDto.setSurname(user.getSurname());
+        userDto.setUsername(user.getUsername());
+        userDto.setWorkplace(user.getWorkplace());
         userDto.setRole(user.getRole());
         return userDto;
     }

@@ -47,9 +47,12 @@ public class LocalizationService {
                     Languages.EN, "Enter your position (If you are an ordinary citizen, write 'citizen'):"
             )),
             Map.entry("ask_workplace", Map.of(
-                    Languages.UZ, "Ish joyingiz va manzilini kiriting (Agar oddiy fuqaro bo'lsangiz, o'z manzilingizni kiriting):",
-                    Languages.RU, "Введите место работы и адрес (Если вы обычный гражданин, укажите свой домашний адрес):",
-                    Languages.EN, "Enter your workplace and address (If you are an ordinary citizen, enter your home address):"
+                    Languages.UZ, "Ish joyingiz va manzilini kiriting (Agar ishsiz bo'lsangiz, 'ishsiz' deb qoldiring).\n" +
+                            "/Namuna: Toshkent viloyati, Yangi Yo‘l tumani, 5-son BMSM, o‘qituvchi./",
+                    Languages.RU, "Введите место работы и адрес (Если вы безработный, укажите 'безработный').\n" +
+                            "Пример: Ташкентская область, Янги Йульский район, школа №5, учитель.",
+                    Languages.EN, "Enter your workplace and address (If you are unemployed, write 'unemployed').\n" +
+                            "/Example: Tashkent region, Yangi Yo‘l district, School No. 5, teacher./"
             )),
             Map.entry("ask_feedback", Map.of(
                     Languages.UZ, "Murojaatingizni yozing:",
@@ -57,9 +60,12 @@ public class LocalizationService {
                     Languages.EN, "Please enter your message:"
             )),
             Map.entry("thank_you", Map.of(
-                    Languages.UZ, "Rahmat! Murojaatingiz qabul qilindi.",
-                    Languages.RU, "Спасибо! Ваше обращение принято.",
-                    Languages.EN, "Thank you! Your request has been received."
+                    Languages.UZ, "Rahmat! Murojaatingiz qabul qilindi. " +
+                            "Tez orada mutaxassislarimiz siz bilan bog‘lanishadi.",
+                    Languages.RU, "Спасибо! Ваш запрос принят. " +
+                            "Наши специалисты свяжутся с вами в ближайшее время.",
+                    Languages.EN, "Thank you! Your request has been received. " +
+                            "Our specialists will contact you soon."
             )),
             Map.entry("main_menu", Map.of(
                     Languages.UZ, "📋 Asosiy menyuga xush kelibsiz!",
